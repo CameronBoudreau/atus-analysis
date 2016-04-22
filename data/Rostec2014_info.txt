@@ -1,0 +1,12 @@
+
+The data file atusrostec_2014.dat (2014 Eldercare Roster file) contains 12 variables and 3,017 observations.  
+
+For more information about this file, see the ATUS 2014 Interview Data Dictionary, available online at:  http://www.bls.gov/tus/atusintcodebk14.pdf.
+
+In addition to the data file, three computer programs are contained in atusrostec_2014.zip.  If you have SPSS, SAS, or Stata software, you may use these programs to read the data into your statistical software package.  The programs include variable and value labels for most variables.  For information about unlabeled values, please refer to the data dictionary.
+
+The file "atusrostec_2014.sps" reads the data into SPSS; some variable names exceed length 8.
+
+The file "atusrostec_2014.sas" reads the data into SAS.
+
+The file "atusrostec_2014.do" reads the data into Stata.

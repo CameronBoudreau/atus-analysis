@@ -1,0 +1,14 @@
+
+The data file atusrost_2014.dat (2014 Roster file) contains 8 variables and 31,199 observations.  
+
+For more information about this file, see the ATUS 2014 Interview Data Dictionary, available online at:  http://www.bls.gov/tus/atusintcodebk14.pdf.
+
+In addition to the data file, three computer programs are contained in atusrost_2014.zip.  If you have SPSS, SAS, or Stata software, you may use these programs to read the data into your statistical software package.  The programs include variable and value labels for most variables.  For information about unlabeled values, please refer to the data dictionary.
+
+The file "atusrost_2014.sps" reads the data into SPSS; some variable names exceed length 8.
+
+The file "atusrost_2014.sas" reads the data into SAS.
+
+The file "atusrost_2014.do" reads the data into Stata.
+
+If you have SAS, SPSS, or Stata software, open the corresponding program, edit the infile (in SAS), file (in SPSS), or insheet (in Stata) statement to reference the data file on your computer, and run the program. 
