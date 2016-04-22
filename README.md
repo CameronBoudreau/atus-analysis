@@ -7,4 +7,4 @@ A pressing, yet possibly terrifying question. The 2014 Census data has been exam
 2.What is the most popular leisure activity for different groups?
 3.What groups spend the most time alone?
 4.What groups read the most?
-5.Is there a correlation between having kids and traveling?
+5.Mind, body, spirit balance among groups.
