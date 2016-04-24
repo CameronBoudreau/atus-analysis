@@ -145,7 +145,7 @@ balance_by_agegroup = balance_by_age.groupby('AGEGROUP').mean()
 stdev_balance_by_agegroup = balance_by_agegroup.copy()
 stdev_balance_by_agegroup['STDEV'] = stdev_balance_by_agegroup.std(axis=1)
 
-agax = stdev_balance_by_agegroup.plot(kind='bar', figsize=(15,8))
+agax = stdev_balance_by_agegroup.plot(kind='bar', figsize=(15, 8))
 agax.set_ylabel('Minutes/Day')
 agax.set_xlabel('Education Level')
 
@@ -160,8 +160,9 @@ create_three_point_radar(balance_by_agegroup, [0, 3, 5], 9)
 balance_by_children = mind_body_spirit.groupby('TRCHILDNUM').mean()
 balance_by_children.drop(balance_by_children.columns[0:4], axis=1, inplace=True)
 balance_by_children['STDEV'] = balance_by_children.std(axis=1)
-balance_by_children.plot()
-
+childax = balance_by_children.plot(figsize=(15, 8))
+childax.set_ylabel('Minutes/Day')
+childax.set_xlabel('Number of Children')
 
 """ Data is split for sexes by age """
 
@@ -174,7 +175,7 @@ balance_by_sex = balance_by_sex.groupby(['TESEX', 'TEAGE']).mean()
 
 std_balance_by_sex = balance_by_sex.copy()
 std_balance_by_sex['STDEV'] = balance_by_sex.std(axis=1)
-std_balance_by_sex.head()
+
 
 maleax = male.plot(title='Male M/B/S balance by age', figsize=(15,8), style=['-','-','-','--'], fontsize=14)
 maleax.set_ylabel('Minutes/Day')
