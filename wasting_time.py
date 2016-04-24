@@ -172,7 +172,9 @@ std_balance_by_sex = balance_by_sex.copy()
 std_balance_by_sex['STDEV'] = balance_by_sex.std(axis=1)
 std_balance_by_sex.head()
 
-male = balance_by_sex.loc[1]
-female = balance_by_sex.loc[2]
-male.plot(title='Male M/B/S balance by age', figsize=(15,8), style=['-','-','-','--'], fontsize=14)
-female.plot(title='Female M/B/S balance by age', figsize=(15,8), style=['-','-','-','--'], fontsize=14)
+maleax = male.plot(figsize=(15, 8))
+maleax.set_ylabel('Minutes/Day')
+maleax.set_xlabel('Age')
+femaleax = female.plot(title='Female M/B/S balance by age', figsize=(15,8), style=['-','-','-','--'], fontsize=14)
+femaleax.set_ylabel('Minutes/Day')
+femaleax.set_xlabel('Age')
