@@ -1,8 +1,75 @@
 import matplotlib.pyplot as plt
+import pylab as pl
 import numpy as np
 import pandas as pd
 from pandas import DataFrame, Series
 import seaborn
+
+
+""" Makes a Radar class and a function to create radar graphs later """
+
+class Radar(object):
+
+    def __init__(self, fig, titles, labels, rect=None):
+        if rect is None:
+            rect = [0.05, 0.05, 0.95, 0.95]
+
+        self.n = len(titles)
+        self.angles = np.arange(90, 90+360, 360.0/self.n)
+        self.axes = [fig.add_axes(rect, projection="polar", label="axes%d" % i)
+                         for i in range(self.n)]
+
+        self.ax = self.axes[0]
+        self.ax.set_thetagrids(self.angles, labels=titles, fontsize=14)
+
+        for ax in self.axes[1:]:
+            ax.patch.set_visible(False)
+            ax.grid("off")
+            ax.xaxis.set_visible(False)
+
+        for ax, angle, label in zip(self.axes, self.angles, labels):
+            ax.set_rgrids(range(20, 100, 20), angle=angle, labels=label)
+            ax.spines["polar"].set_visible(False)
+            ax.set_ylim(0, 100)
+
+    def plot(self, values, *args, **kw):
+        angle = np.deg2rad(np.r_[self.angles, self.angles[0]])
+        values = np.r_[values, values[0]]
+        self.ax.plot(angle, values, *args, **kw)
+
+    def get_color(self, i):
+        if i == 0:
+            return 'c'
+        elif i == 1:
+            return 'm'
+        elif i == 2:
+            return 'y'
+        elif i == 3:
+            return 'g'
+        elif i == 4:
+            return 'b'
+        elif i == 5:
+            return 'r'
+        else:
+            return 'burlywood'
+
+
+def create_three_point_radar(df, rows=[], size=6):
+    fig = pl.figure(figsize=(size, size))
+
+    titles = df.columns
+
+    labels = [range(20, 101, 20) for x in range(len(titles))]
+
+    radar = Radar(fig, titles, labels)
+
+    if rows:
+        for i in rows:
+            radar.plot(df.values[i],  "-", lw=3, color=radar.get_color(i), alpha=0.4, label=df.index[i])
+    else:
+        for i in range(len(df.index)):
+            radar.plot(df.values[i],  "-", lw=3, color=radar.get_color(i), alpha=0.4, label=df.index[i])
+    radar.ax.legend()
 
 
 """ Gets the activity summary, renames the case ID field to be consistent with
@@ -47,31 +114,65 @@ get_spirit = [x for x in col_names if x.startswith(('t14', 't15', 't120304'))]
     type of activity, then clean the unneeded columns """
 
 mind_body_spirit = activity_summary[col_names].copy()
-mind_body_spirit.head()
 
-mind_body_spirit['BODY_TOTAL'] = mind_body_spirit[get_body].sum(axis=1)
-mind_body_spirit['MIND_TOTAL'] = mind_body_spirit[get_mind].sum(axis=1)
-mind_body_spirit['SPIRIT_TOTAL'] = mind_body_spirit[get_spirit].sum(axis=1)
+mind_body_spirit['BODY'] = mind_body_spirit[get_body].sum(axis=1)
+mind_body_spirit['MIND'] = mind_body_spirit[get_mind].sum(axis=1)
+mind_body_spirit['SPIRIT'] = mind_body_spirit[get_spirit].sum(axis=1)
 
 mind_body_spirit = mind_body_spirit.drop(mind_body_spirit.columns[5:-3], axis=1)
 
 
 """ Balance by Age created by grouping by age and getting the mean for each
-    of mind, body, and spirit. Data is graphed here """
+    of mind, body, and spirit as well as the standard deviation of the three.
+    Data is graphed here """
 
 balance_by_age = mind_body_spirit.groupby('TEAGE').mean()
 balance_by_age.drop(balance_by_age.columns[0:4], axis=1, inplace=True)
-balance_by_age.plot()
+balance_by_age = balance_by_age.drop(balance_by_age.index[:3])
 
-""" Same format for sorting by children, sex, education level"""
+stdev_balance_by_age = balance_by_age.copy()
+stdev_balance_by_age['STDEV'] = stdev_balance_by_age.std(axis=1)
+stdev_balance_by_age.plot(figsize=(15, 8))
+
+""" Sorted by age groups """
+labels = ['18-24', '25-34', '35-44', '45-54', '55-64', '65-74', '75+']
+balance_by_age['AGEGROUP'] = pd.cut(balance_by_age.index, [18, 25, 35, 45, 55, 65, 75, 86], right=False, labels=labels)
+
+balance_by_agegroup = balance_by_age.groupby('AGEGROUP').mean()
+stdev_balance_by_agegroup = balance_by_agegroup.copy()
+stdev_balance_by_agegroup['STDEV'] = stdev_balance_by_agegroup.std(axis=1)
+stdev_balance_by_agegroup
+
+stdev_balance_by_agegroup.plot(kind='bar')
+
+for i in range(len(balance_by_agegroup.index)):
+    create_three_point_radar(balance_by_agegroup, [i], 6)
+
+create_three_point_radar(balance_by_agegroup, [0, 3, 5], 9)
+
+
+""" Same format for sorting by children """
+
 balance_by_children = mind_body_spirit.groupby('TRCHILDNUM').mean()
 balance_by_children.drop(balance_by_children.columns[0:4], axis=1, inplace=True)
+balance_by_children['STDEV'] = balance_by_children.std(axis=1)
 balance_by_children.plot()
 
-balance_by_sex = mind_body_spirit.groupby('TESEX').mean()
-balance_by_sex.drop(balance_by_sex.columns[0:4], axis=1, inplace=True)
-balance_by_sex.plot(kind='barh')
 
-balance_by_edu = mind_body_spirit.groupby('PEEDUCA').mean()
-balance_by_edu.drop(balance_by_edu.columns[0:4], axis=1, inplace=True)
-balance_by_edu.plot(kind='bar')
+""" Data is split for sexes by age """
+
+balance_by_sex = mind_body_spirit.copy()
+balance_by_sex.drop(['TUCASEID', 'TRCHILDNUM', "PEEDUCA"], axis=1, inplace=True)
+balance_by_sex = balance_by_sex[balance_by_sex.TEAGE >= 18]
+
+balance_by_sex.sort_values(['TEAGE', 'TESEX'])
+balance_by_sex = balance_by_sex.groupby(['TESEX', 'TEAGE']).mean()
+
+std_balance_by_sex = balance_by_sex.copy()
+std_balance_by_sex['STDEV'] = balance_by_sex.std(axis=1)
+std_balance_by_sex.head()
+
+male = balance_by_sex.loc[1]
+female = balance_by_sex.loc[2]
+male.plot(title='Male M/B/S balance by age', figsize=(15,8), style=['-','-','-','--'], fontsize=14)
+female.plot(title='Female M/B/S balance by age', figsize=(15,8), style=['-','-','-','--'], fontsize=14)
