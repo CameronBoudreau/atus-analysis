@@ -1,23 +1,21 @@
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import pylab as pl
 import numpy as np
 import pandas as pd
-from pandas import DataFrame, Series
 import seaborn
 
 
 """ Makes a Radar class and a function to create radar graphs later """
 
-class Radar(object):
 
+class Radar(object):
     def __init__(self, fig, titles, labels, rect=None):
         if rect is None:
             rect = [0.05, 0.05, 0.95, 0.95]
 
         self.n = len(titles)
         self.angles = np.arange(90, 90+360, 360.0/self.n)
-        self.axes = [fig.add_axes(rect, projection="polar", label="axes%d" % i)
-                         for i in range(self.n)]
+        self.axes = [fig.add_axes(rect, projection="polar", label="axes%d" % i) for i in range(self.n)]
 
         self.ax = self.axes[0]
         self.ax.set_thetagrids(self.angles, labels=titles, fontsize=14)
@@ -129,10 +127,15 @@ mind_body_spirit = mind_body_spirit.drop(mind_body_spirit.columns[5:-3], axis=1)
 balance_by_age = mind_body_spirit.groupby('TEAGE').mean()
 balance_by_age.drop(balance_by_age.columns[0:4], axis=1, inplace=True)
 balance_by_age = balance_by_age.drop(balance_by_age.index[:3])
+ageax = balance_by_age.plot(figsize=(15, 8))
+ageax.set_ylabel('Minutes/Day')
+ageax.set_xlabel('Age')
 
 stdev_balance_by_age = balance_by_age.copy()
 stdev_balance_by_age['STDEV'] = stdev_balance_by_age.std(axis=1)
-stdev_balance_by_age.plot(figsize=(15, 8))
+ax = stdev_balance_by_age.plot(figsize=(15, 8))
+ax.set_ylabel('Minutes/Day')
+ax.set_xlabel('Age')
 
 """ Sorted by age groups """
 labels = ['18-24', '25-34', '35-44', '45-54', '55-64', '65-74', '75+']
@@ -141,9 +144,10 @@ balance_by_age['AGEGROUP'] = pd.cut(balance_by_age.index, [18, 25, 35, 45, 55, 6
 balance_by_agegroup = balance_by_age.groupby('AGEGROUP').mean()
 stdev_balance_by_agegroup = balance_by_agegroup.copy()
 stdev_balance_by_agegroup['STDEV'] = stdev_balance_by_agegroup.std(axis=1)
-stdev_balance_by_agegroup
 
-stdev_balance_by_agegroup.plot(kind='bar')
+agax = stdev_balance_by_agegroup.plot(kind='bar', figsize=(15,8))
+agax.set_ylabel('Minutes/Day')
+agax.set_xlabel('Education Level')
 
 for i in range(len(balance_by_agegroup.index)):
     create_three_point_radar(balance_by_agegroup, [i], 6)
@@ -172,7 +176,7 @@ std_balance_by_sex = balance_by_sex.copy()
 std_balance_by_sex['STDEV'] = balance_by_sex.std(axis=1)
 std_balance_by_sex.head()
 
-maleax = male.plot(figsize=(15, 8))
+maleax = male.plot(title='Male M/B/S balance by age', figsize=(15,8), style=['-','-','-','--'], fontsize=14)
 maleax.set_ylabel('Minutes/Day')
 maleax.set_xlabel('Age')
 femaleax = female.plot(title='Female M/B/S balance by age', figsize=(15,8), style=['-','-','-','--'], fontsize=14)
