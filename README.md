@@ -3,6 +3,10 @@
 ## How do Americans spent their lives?
 A pressing, yet possibly terrifying question. The 2014 Census data has been examined to answer the question of how balanced our lives are in the US. That is, what is the mind, body, spirit balance among different groups?
 
+# Where can I find the analysis?
+
+It is in a jupyter notebook at https://github.com/unknown6238/atus-analysis/blob/master/ATUS-Analysis.ipynb.
+
 # How do you get the data?
 
 The categories of mind, body, and spirit were built by going through the multitude of categories in the census and identifying those that would be considered taking care of the body (eg. exercise and grooming), mind (eg. school and reading), or spirit (eg. religious activity). 
